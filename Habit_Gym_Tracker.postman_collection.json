@@ -1,0 +1,1191 @@
+{
+	"info": {
+		"_postman_id": "habit-gym-tracker-api",
+		"name": "Habit & Gym Tracker API",
+		"description": "Complete API collection for Habit & Gym Tracker application. Includes authentication, user management, habits, and workouts endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) {",
+									"        pm.environment.set('auth_token', response.token);",
+									"        pm.environment.set('user_id', response.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Register a new user account. The response includes a JWT token that will be automatically saved to environment variables."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) {",
+									"        pm.environment.set('auth_token', response.token);",
+									"        pm.environment.set('user_id', response.user.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login with email and password. The response includes a JWT token that will be automatically saved to environment variables."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration and login"
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/profile",
+							"host": ["{{base_url}}"],
+							"path": ["user", "profile"]
+						},
+						"description": "Get the authenticated user's profile information."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/user/profile",
+							"host": ["{{base_url}}"],
+							"path": ["user", "profile"]
+						},
+						"description": "Update the authenticated user's profile information."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"oldpassword123\",\n  \"newPassword\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/user/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["user", "change-password"]
+						},
+						"description": "Change the user's password. Requires current password for verification."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/stats",
+							"host": ["{{base_url}}"],
+							"path": ["user", "stats"]
+						},
+						"description": "Get user statistics including total habits, total workouts, and longest streak."
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Habits",
+			"item": [
+				{
+					"name": "Get All Habits",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/habits?date=",
+							"host": ["{{base_url}}"],
+							"path": ["habits"],
+							"query": [
+								{
+									"key": "date",
+									"value": "",
+									"description": "Optional: Filter by date (YYYY-MM-DD)"
+								}
+							]
+						},
+						"description": "Get all habits for the authenticated user. Optionally filter by date."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Daily Summary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/habits/summary/daily?date=",
+							"host": ["{{base_url}}"],
+							"path": ["habits", "summary", "daily"],
+							"query": [
+								{
+									"key": "date",
+									"value": "",
+									"description": "Optional: Date for summary (YYYY-MM-DD), defaults to today"
+								}
+							]
+						},
+						"description": "Get daily habit summary with completion statistics."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Habit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.habit && response.habit._id) {",
+									"        pm.environment.set('habit_id', response.habit._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Read Book\",\n  \"category\": \"Health\",\n  \"frequency\": \"daily\",\n  \"reminderTime\": \"20:00\",\n  \"reminderEnabled\": true,\n  \"goalType\": \"boolean\",\n  \"color\": \"#0ea5e9\",\n  \"icon\": \"📚\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/habits",
+							"host": ["{{base_url}}"],
+							"path": ["habits"]
+						},
+						"description": "Create a new habit. The created habit ID will be automatically saved to environment variables."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Habit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Read 30 Pages\",\n  \"frequency\": \"daily\",\n  \"reminderTime\": \"21:00\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/habits/:id",
+							"host": ["{{base_url}}"],
+							"path": ["habits", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{habit_id}}",
+									"description": "Habit ID"
+								}
+							]
+						},
+						"description": "Update an existing habit by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Habit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/habits/:id",
+							"host": ["{{base_url}}"],
+							"path": ["habits", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{habit_id}}",
+									"description": "Habit ID"
+								}
+							]
+						},
+						"description": "Delete a habit by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Habit as Completed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-01-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/habits/:id/complete",
+							"host": ["{{base_url}}"],
+							"path": ["habits", ":id", "complete"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{habit_id}}",
+									"description": "Habit ID"
+								}
+							]
+						},
+						"description": "Mark a habit as completed for a specific date (defaults to today if not provided)."
+					},
+					"response": []
+				},
+				{
+					"name": "Unmark Habit as Completed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-01-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/habits/:id/uncomplete",
+							"host": ["{{base_url}}"],
+							"path": ["habits", ":id", "uncomplete"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{habit_id}}",
+									"description": "Habit ID"
+								}
+							]
+						},
+						"description": "Unmark a habit completion for a specific date."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Habit Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/habits/:id/analytics?days=30",
+							"host": ["{{base_url}}"],
+							"path": ["habits", ":id", "analytics"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{habit_id}}",
+									"description": "Habit ID"
+								}
+							],
+							"query": [
+								{
+									"key": "days",
+									"value": "30",
+									"description": "Number of days for analytics (optional)"
+								}
+							]
+						},
+						"description": "Get analytics for a specific habit including completion rate, current streak, and total completions."
+					},
+					"response": []
+				}
+			],
+			"description": "Habit management endpoints with full CRUD operations"
+		},
+		{
+			"name": "Workouts",
+			"item": [
+				{
+					"name": "Get All Workouts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts?search=&muscleGroup=&workoutType=&sortBy=&startDate=&endDate=",
+							"host": ["{{base_url}}"],
+							"path": ["workouts"],
+							"query": [
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search exercises by name"
+								},
+								{
+									"key": "muscleGroup",
+									"value": "",
+									"description": "Filter by muscle group"
+								},
+								{
+									"key": "workoutType",
+									"value": "",
+									"description": "Filter by workout type"
+								},
+								{
+									"key": "sortBy",
+									"value": "",
+									"description": "Sort by: volume, duration, or date"
+								},
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Start date filter (YYYY-MM-DD)"
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "End date filter (YYYY-MM-DD)"
+								}
+							]
+						},
+						"description": "Get all workouts for the authenticated user with optional filters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Get a specific workout by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.workout && response.workout._id) {",
+									"        pm.environment.set('workout_id', response.workout._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-01-15\",\n  \"exercises\": [\n    {\n      \"name\": \"Bench Press\",\n      \"muscleGroup\": \"Chest\",\n      \"equipment\": \"Barbell\",\n      \"sets\": [\n        {\n          \"reps\": 10,\n          \"weight\": 80,\n          \"restTime\": 90,\n          \"rpe\": 7\n        },\n        {\n          \"reps\": 8,\n          \"weight\": 85,\n          \"restTime\": 90,\n          \"rpe\": 8\n        }\n      ]\n    },\n    {\n      \"name\": \"Squat\",\n      \"muscleGroup\": \"Legs\",\n      \"sets\": [\n        {\n          \"reps\": 10,\n          \"weight\": 100\n        },\n        {\n          \"reps\": 8,\n          \"weight\": 110\n        }\n      ]\n    }\n  ],\n  \"notes\": \"Great session!\",\n  \"workoutType\": \"Strength\",\n  \"weightUnit\": \"kg\",\n  \"duration\": 60\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts",
+							"host": ["{{base_url}}"],
+							"path": ["workouts"]
+						},
+						"description": "Create a new workout with exercises and sets. The created workout ID will be automatically saved to environment variables."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-01-15\",\n  \"exercises\": [\n    {\n      \"name\": \"Bench Press\",\n      \"sets\": [\n        {\n          \"reps\": 12,\n          \"weight\": 75\n        }\n      ]\n    }\n  ],\n  \"notes\": \"Updated notes\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Update an existing workout by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Delete a workout by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Start Workout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.workout && response.workout._id) {",
+									"        pm.environment.set('workout_id', response.workout._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"date\": \"2024-01-15\",\n  \"workoutType\": \"Strength\",\n  \"weightUnit\": \"kg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts/start",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "start"]
+						},
+						"description": "Start a new active workout session."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/active/current",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "active", "current"]
+						},
+						"description": "Get the current active workout session."
+					},
+					"response": []
+				},
+				{
+					"name": "Pause Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/:id/pause",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id", "pause"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Pause an active workout."
+					},
+					"response": []
+				},
+				{
+					"name": "Resume Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/:id/resume",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id", "resume"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Resume a paused workout."
+					},
+					"response": []
+				},
+				{
+					"name": "End Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"duration\": 60,\n  \"notes\": \"Completed workout\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts/:id/end",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id", "end"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "End an active workout session."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Exercise to Workout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Deadlift\",\n  \"muscleGroup\": \"Back\",\n  \"equipment\": \"Barbell\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts/:id/exercises",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id", "exercises"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								}
+							]
+						},
+						"description": "Add an exercise to an existing workout."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Set to Exercise",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reps\": 10,\n  \"weight\": 100,\n  \"restTime\": 120,\n  \"rpe\": 7,\n  \"completed\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workouts/:id/exercises/:exerciseIndex/sets",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", ":id", "exercises", ":exerciseIndex", "sets"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{workout_id}}",
+									"description": "Workout ID"
+								},
+								{
+									"key": "exerciseIndex",
+									"value": "0",
+									"description": "Index of the exercise in the workout"
+								}
+							]
+						},
+						"description": "Add a set to a specific exercise in a workout."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout Stats Summary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/stats/summary?startDate=&endDate=",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "stats", "summary"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "",
+									"description": "Start date (YYYY-MM-DD)"
+								},
+								{
+									"key": "endDate",
+									"value": "",
+									"description": "End date (YYYY-MM-DD)"
+								}
+							]
+						},
+						"description": "Get workout statistics summary for a date range."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workout Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/analytics/progression?exerciseName=&muscleGroup=&days=",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "analytics", "progression"],
+							"query": [
+								{
+									"key": "exerciseName",
+									"value": "",
+									"description": "Filter by exercise name"
+								},
+								{
+									"key": "muscleGroup",
+									"value": "",
+									"description": "Filter by muscle group"
+								},
+								{
+									"key": "days",
+									"value": "",
+									"description": "Number of days to analyze"
+								}
+							]
+						},
+						"description": "Get workout progression analytics."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise Library",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/exercises/library?search=&muscleGroup=&equipment=",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "exercises", "library"],
+							"query": [
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search exercises by name"
+								},
+								{
+									"key": "muscleGroup",
+									"value": "",
+									"description": "Filter by muscle group"
+								},
+								{
+									"key": "equipment",
+									"value": "",
+									"description": "Filter by equipment"
+								}
+							]
+						},
+						"description": "Get exercise library with search and filter options."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Personal Records (PRs)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workouts/prs?exerciseName=",
+							"host": ["{{base_url}}"],
+							"path": ["workouts", "prs"],
+							"query": [
+								{
+									"key": "exerciseName",
+									"value": "",
+									"description": "Filter by exercise name (optional)"
+								}
+							]
+						},
+						"description": "Get personal records (PRs) for exercises."
+					},
+					"response": []
+				}
+			],
+			"description": "Workout management endpoints with full CRUD operations and advanced features"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check endpoint to verify API is running."
+					},
+					"response": []
+				}
+			],
+			"description": "System health check endpoint"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "habit_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "workout_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
