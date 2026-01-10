@@ -220,6 +220,31 @@ git checkout main
 - Verify token has `repo` scope
 - Check token hasn't expired
 
+### Error: "Permission denied (publickey)" - SSH Authentication Issue
+This error occurs when your remote URL uses SSH (`git@github.com`) but you don't have SSH keys set up.
+
+**Quick Fix - Switch to HTTPS:**
+```bash
+# Check current remote URL
+git remote -v
+
+# Change remote URL to HTTPS
+git remote set-url origin https://github.com/dhruvin210/Habit-Gym-Tracker-A-Personal-Fitness-Discipline-Management-Web-App.git
+
+# Verify the change
+git remote -v
+
+# Now try pushing again (will prompt for username and token)
+git push -u origin main
+```
+
+**Alternative - Set up SSH keys (if you prefer SSH):**
+1. Generate SSH key: `ssh-keygen -t ed25519 -C "your_email@example.com"`
+2. Start SSH agent: `eval "$(ssh-agent -s)"`
+3. Add key: `ssh-add ~/.ssh/id_ed25519`
+4. Copy public key: `cat ~/.ssh/id_ed25519.pub`
+5. Add to GitHub: Settings → SSH and GPG keys → New SSH key
+
 ### Error: "Updates were rejected"
 ```bash
 # Pull latest changes first
