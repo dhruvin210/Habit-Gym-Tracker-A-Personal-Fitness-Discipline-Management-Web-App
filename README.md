@@ -1,19 +1,176 @@
-# 💪 Habit & Gym Tracker
+# Habit & Gym Tracker
 
 A modern, full-stack web application for tracking daily habits and gym workouts. Build consistency, monitor progress, and achieve your fitness goals with this comprehensive tracking platform.
 
-> ✅ **Status**: All deliverables complete - Frontend (Next.js) + Backend (Node.js), JWT authentication, CRUD-enabled dashboard, API documentation, and production scaling guide. See [PROJECT_STATUS.md](./PROJECT_STATUS.md) for details.
+> **Status**: All deliverables complete - Frontend (Next.js) + Backend (Node.js), JWT authentication, CRUD-enabled dashboard, API documentation, and production scaling guide. See [PROJECT_STATUS.md](./PROJECT_STATUS.md) for details.
 
-## 🎯 Features
+## Features
 
-- **User Authentication**: Secure JWT-based authentication with password hashing
-- **Habit Tracking**: Create, edit, and track daily/weekly habits with streak counters
-- **Gym Tracking**: Log workouts with exercises, sets, reps, and weights
-- **Analytics Dashboard**: Visualize progress with charts and completion rates
-- **Profile Management**: Update profile information and change password
-- **Responsive Design**: Modern UI built with Tailwind CSS
+### Authentication & User Management
+- **Secure Registration & Login**: JWT-based authentication with password hashing (bcryptjs)
+- **User Profile**: Update name, email, and change password
+- **Protected Routes**: Secure access to all features with authentication middleware
+- **Session Management**: Automatic token handling with localStorage
 
-## 🛠️ Tech Stack
+### Dashboard
+- **Welcome Section**: Personalized greeting with motivational quotes
+- **Today's Progress**: Daily habit completion percentage with visual progress bar
+- **Key Statistics Cards**:
+  - Today's Habits (completed/total)
+  - Current Streak (longest streak in days)
+  - Total Workouts logged
+  - Weekly Habits Completion
+- **Visual Charts**:
+  - Weekly Progress Bar Chart (habit completion trends)
+  - 30-Day Workout Activity Line Chart
+  - Dark mode optimized charts with theme-aware colors
+- **Quick Overview Widgets**:
+  - Your Habits: List of recent habits with completion status
+  - Recent Workouts: Last 3 workouts with exercise counts
+  - Achievements: Unlockable badges (7-day streak, 30-day streak, 10 workouts, 50 workouts, 5 habits)
+    - Achieved achievements shown in full color
+    - Unachieved achievements displayed in greyed-out style
+- **Quick Actions**: Direct links to manage habits and log workouts
+
+### Habit Tracking
+Create, manage, and track your daily habits with comprehensive features:
+
+- **Habit Management**:
+  - Create habits with custom names, categories, and icons
+  - Edit and delete existing habits
+  - Multiple categories: Health, Fitness, Productivity, Mindfulness, Custom
+  - Customizable colors and emoji icons
+
+- **Frequency Options**:
+  - Daily habits (every day)
+  - Weekly habits (specific days of the week)
+  - Custom frequency (X times per week)
+
+- **Goal Types**:
+  - Yes/No completion (simple checkbox)
+  - Numeric goals (track numbers, e.g., "Drink 8 glasses of water")
+
+- **Tracking Features**:
+  - Mark habits as complete/incomplete for any date
+  - View daily summary with completion statistics
+  - Date selector to track past dates
+  - Visual completion indicators
+
+- **Analytics & Insights**:
+  - Individual habit analytics with expandable view
+  - Completion rate percentage
+  - Current streak tracking
+  - Longest streak achieved
+  - Total completions count
+  - Weekly pattern bar chart (completion by day of week)
+  - 30-day heatmap visualization
+
+- **Search & Filter**:
+  - Search habits by name
+  - Filter by category
+  - Filter by status (all, completed, incomplete)
+  - Sort by name, streak, or completion rate
+
+### Workout Tracking
+Comprehensive gym workout logging with detailed exercise tracking:
+
+- **Workout Management**:
+  - Create new workouts manually
+  - Start active workout with live timer
+  - Pause/resume active workouts
+  - Complete and save workouts
+  - Edit and delete past workouts
+  - Workout notes for personal records
+
+- **Exercise Tracking**:
+  - Add multiple exercises per workout
+  - Exercise library with autocomplete suggestions
+  - Muscle group classification (Chest, Back, Legs, Shoulders, Arms, Core, Cardio, Full Body)
+  - Equipment type tracking (Barbell, Dumbbell, Machine, Bodyweight, Cable, Kettlebell, Other)
+  - Multiple sets per exercise
+  - Track reps and weights for each set
+  - Optional rest time and RPE (Rate of Perceived Exertion)
+
+- **Active Workout Features**:
+  - Live workout timer with elapsed time tracking
+  - Add exercises on the go
+  - Add sets during workout
+  - Pause/resume functionality
+  - Weight unit toggle (kg/lb)
+
+- **Statistics & Analytics**:
+  - Total workout count
+  - Total workout duration
+  - Total volume lifted
+  - Weekly workout statistics
+  - Volume trend line chart (30 days)
+  - Muscle group distribution pie chart
+  - Personal Records (PR) tracking:
+    - Automatic PR detection
+    - Max weight lifted per exercise
+    - Max reps per exercise
+    - Estimated 1RM calculation
+
+- **Workout History**:
+  - View all past workouts
+  - Filter by date range (today, this week, custom)
+  - Filter by muscle group
+  - Filter by workout type
+  - Search workouts by exercise name
+  - Sort by date, volume, or duration
+  - Expandable workout details with all exercises and sets
+
+### Analytics & Progress
+Dedicated analytics page for comprehensive progress tracking:
+
+- **Habit Analytics**:
+  - 30-day habit completion line chart
+  - Completion trends and patterns
+  - Overall habit performance metrics
+
+- **Workout Analytics**:
+  - Volume trends over time
+  - Muscle group distribution
+  - Workout frequency analysis
+  - Duration tracking
+
+- **Visual Charts**:
+  - Interactive line charts
+  - Bar charts
+  - Pie charts
+  - Responsive and mobile-friendly
+
+### User Interface
+- **Modern Design**: Clean, intuitive interface built with Tailwind CSS
+- **Dark Mode**: Full dark theme support with theme toggle
+  - Automatic theme detection
+  - Manual theme switching
+  - Theme-aware charts and components
+- **Responsive Layout**: Mobile-friendly design that works on all devices
+- **Interactive Components**: 
+  - Animated transitions with Framer Motion
+  - Toast notifications for user feedback
+  - Loading skeletons for better UX
+  - Modal dialogs for forms
+- **Sidebar Navigation**: Easy navigation between sections
+- **Real-time Updates**: Instant feedback on actions
+
+### Achievements System
+- **Unlockable Achievements**:
+  - 7 Day Streak
+  - 30 Day Streak
+  - 10 Workouts
+  - 50 Workouts
+  - 5 Habits
+- **Visual Status**: Achieved achievements shown in full color, unachieved in greyed-out style
+- **Progress Tracking**: Clear indication of which achievements are unlocked
+
+### Search & Filter
+- **Habits**: Search, filter by category/status, sort by various criteria
+- **Workouts**: Search, filter by date/muscle group/workout type, sort by date/volume/duration
+- **Real-time Filtering**: Instant results as you type or change filters
+
+## Tech Stack
 
 ### Backend
 - **Node.js** with Express.js (JavaScript runtime)
@@ -30,7 +187,7 @@ A modern, full-stack web application for tracking daily habits and gym workouts.
 
 > **Note**: This project uses Node.js exclusively for the backend. While the project structure could support Python/Flask or Django backends, this implementation focuses on a Node.js/Express.js stack.
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -92,18 +249,70 @@ npm run dev
 
 The frontend will run on `http://localhost:3000`
 
-## 🚀 Usage
+## Usage
 
+### Getting Started
 1. **Register/Login**: Create a new account or login with existing credentials
-2. **Dashboard**: View your daily summary, streaks, and quick stats
-3. **Habits**: Create habits, mark them as complete, and track your consistency
-4. **Workouts**: Log gym sessions with exercises, sets, reps, and weights
-5. **Analytics**: View progress charts and completion rates
-6. **Profile**: Update your profile information and change password
+2. **Dashboard**: View your daily summary, streaks, statistics, and quick overview
 
-## 📡 API Endpoints
+### Using the App
 
-> **📋 Postman Collection**: Import `Habit_Gym_Tracker.postman_collection.json` into Postman for easy API testing with pre-configured requests, environment variables, and automatic token management.
+#### Managing Habits
+1. Navigate to **Habits** from the sidebar
+2. Click **"+ Create Habit"** to add a new habit
+3. Fill in habit details:
+   - Name, category, and icon
+   - Frequency (daily, weekly, or custom)
+   - Goal type (yes/no or numeric)
+   - Start date
+4. Use the date selector to mark habits as complete for any day
+5. Click **"View Analytics"** on any habit to see detailed statistics and charts
+6. Use search and filters to find specific habits
+
+#### Logging Workouts
+1. Navigate to **Workouts** from the sidebar
+2. **Option A - Manual Log**:
+   - Click **"Log Workout"** button
+   - Add exercises with sets, reps, and weights
+   - Add workout details (duration, calories, notes)
+   - Save the workout
+3. **Option B - Active Workout**:
+   - Click **"Start Workout"** for a live session
+   - Timer starts automatically
+   - Add exercises and sets during the workout
+   - Pause/resume as needed
+   - Complete the workout when finished
+4. View workout history, filter by date/muscle group, and track your PRs
+5. Expand any workout to see detailed exercise breakdowns
+
+#### Viewing Analytics
+1. Navigate to **Progress** (Analytics) from the sidebar
+2. View comprehensive charts:
+   - Habit completion trends (30 days)
+   - Workout volume trends
+   - Muscle group distribution
+3. Analyze your progress patterns and identify areas for improvement
+
+#### Profile Management
+1. Navigate to **Profile** from the sidebar
+2. Update your name and email
+3. Change your password securely
+4. View your account information
+
+#### Customization
+1. Click the **Theme Toggle** button in the sidebar to switch between light and dark modes
+2. The theme preference is saved and persists across sessions
+
+### Tips for Best Experience
+- **Consistency**: Mark habits daily to build streaks
+- **Detailed Logging**: Add notes to workouts for better tracking
+- **Analytics**: Review analytics regularly to spot patterns
+- **PRs**: Track your personal records to see strength improvements
+- **Search**: Use filters and search to quickly find specific habits or workouts
+
+## API Endpoints
+
+> **Postman Collection**: Import `Habit_Gym_Tracker.postman_collection.json` into Postman for easy API testing with pre-configured requests, environment variables, and automatic token management.
 
 ### Authentication
 - `POST /api/auth/register` - Register a new user
@@ -131,7 +340,7 @@ The frontend will run on `http://localhost:3000`
 - `DELETE /api/workouts/:id` - Delete a workout (protected)
 - `GET /api/workouts/analytics` - Get workout analytics (protected)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 habit-gym-tracker/
@@ -167,7 +376,7 @@ habit-gym-tracker/
 └── README.md                # This file
 ```
 
-## 🔒 Security Features
+## Security Features
 
 - Password hashing with bcryptjs
 - JWT token-based authentication
@@ -175,7 +384,7 @@ habit-gym-tracker/
 - Input validation
 - Secure password requirements
 
-## 🎨 UI Features
+## UI Features
 
 - Modern, responsive design
 - Clean and intuitive interface
@@ -183,7 +392,7 @@ habit-gym-tracker/
 - Interactive charts and graphs
 - Mobile-friendly layout
 
-## 🧪 Testing
+## Testing
 
 You can test the API endpoints using tools like:
 - Postman
@@ -203,7 +412,7 @@ curl -X POST http://localhost:5000/api/auth/login \
   -d '{"email":"john@example.com","password":"password123"}'
 ```
 
-## 📝 Environment Variables
+## Environment Variables
 
 ### Backend (.env)
 - `PORT` - Server port (default: 5000)
@@ -214,17 +423,17 @@ curl -X POST http://localhost:5000/api/auth/login \
 ### Frontend (.env.local)
 - `NEXT_PUBLIC_API_URL` - Backend API URL
 
-## 🚀 Production Deployment & Scaling
+## Production Deployment & Scaling
 
 For comprehensive production deployment strategies, scaling considerations, and best practices, please refer to these documents:
 
-### 📖 Documentation Files
+### Documentation Files
 
 - **[SCALING.md](./SCALING.md)** - Comprehensive scaling and architecture guide
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Step-by-step deployment instructions
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Complete API reference
 
-### 📋 Quick Reference
+### Quick Reference
 
 The scaling guide covers:
 - **Architecture**: Production-ready architecture with load balancing, caching, and CDN
@@ -258,7 +467,7 @@ The scaling guide covers:
 
 3. **Environment Variables**: Ensure all production environment variables are set (see [SCALING.md](./SCALING.md#environment-configuration))
 
-## 🚧 Future Enhancements
+## Future Enhancements
 
 - Email notifications for habit reminders
 - Dark mode support
@@ -269,18 +478,18 @@ The scaling guide covers:
 - Mobile app version
 - Real-time notifications using WebSockets
 
-## 📄 License
+## License
 
 This project is open source and available under the MIT License.
 
-## 👤 Author
+## Author
 
 Built as a full-stack development project demonstrating modern web development practices.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome!
 
 ---
 
-**Happy Tracking! 💪🔥**
+**Happy Tracking!**

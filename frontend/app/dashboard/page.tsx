@@ -6,6 +6,7 @@ import { userAPI, habitAPI, workoutAPI } from '@/lib/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppLayout from '@/components/AppLayout';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 import {
   LineChart,
   Line,
@@ -45,6 +46,7 @@ const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [stats, setStats] = useState<Stats | null>(null);
   const [habits, setHabits] = useState<any[]>([]);
   const [workouts, setWorkouts] = useState<any[]>([]);
@@ -52,6 +54,13 @@ export default function DashboardPage() {
   const [quote] = useState(
     motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]
   );
+  
+  const isDark = theme === 'dark';
+  const gridColor = isDark ? '#374151' : '#f0f0f0';
+  const axisColor = isDark ? '#9ca3af' : '#6b7280';
+  const tooltipBg = isDark ? '#1f2937' : '#fff';
+  const tooltipBorder = isDark ? '#374151' : '#e5e7eb';
+  const tooltipText = isDark ? '#f3f4f6' : '#111827';
 
   useEffect(() => {
     fetchData();
@@ -171,13 +180,19 @@ export default function DashboardPage() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3);
 
-  // Calculate achievements
-  const achievements = [];
-  if (stats?.longestStreak ?? 0 >= 7) achievements.push({ icon: '🔥', text: '7 Day Streak', color: 'text-orange-500' });
-  if (stats?.longestStreak ?? 0 >= 30) achievements.push({ icon: '⭐', text: '30 Day Streak', color: 'text-yellow-500' });
-  if (stats?.totalWorkouts ?? 0 >= 10) achievements.push({ icon: '💪', text: '10 Workouts', color: 'text-blue-500' });
-  if (stats?.totalWorkouts ?? 0 >= 50) achievements.push({ icon: '🏆', text: '50 Workouts', color: 'text-purple-500' });
-  if (habits.length >= 5) achievements.push({ icon: '📈', text: '5 Habits', color: 'text-green-500' });
+  // Calculate achievements - show all, grey out unachieved ones
+  const allAchievements = [
+    { icon: '🔥', text: '7 Day Streak', color: 'text-orange-500', condition: (stats?.longestStreak ?? 0) >= 7 },
+    { icon: '⭐', text: '30 Day Streak', color: 'text-yellow-500', condition: (stats?.longestStreak ?? 0) >= 30 },
+    { icon: '💪', text: '10 Workouts', color: 'text-blue-500', condition: (stats?.totalWorkouts ?? 0) >= 10 },
+    { icon: '🏆', text: '50 Workouts', color: 'text-purple-500', condition: (stats?.totalWorkouts ?? 0) >= 50 },
+    { icon: '📈', text: '5 Habits', color: 'text-green-500', condition: habits.length >= 5 },
+  ];
+  
+  const achievements = allAchievements.map(achievement => ({
+    ...achievement,
+    achieved: achievement.condition,
+  }));
 
   if (loading) {
     return (
@@ -231,11 +246,11 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium mb-1">Today's Habits</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Today's Habits</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {habitsCompletedToday} / {habits.length}
                   </p>
-                  <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-primary-600 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${todayCompletionRate}%` }}
@@ -254,11 +269,11 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium mb-1">Current Streak</p>
-                  <p className="text-3xl font-bold text-orange-600">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Current Streak</p>
+                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                     🔥 {stats?.longestStreak ?? 0} days
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Keep it going!</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Keep it going!</p>
                 </div>
                 <div className="text-5xl opacity-20">🔥</div>
               </div>
@@ -272,11 +287,11 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium mb-1">Total Workouts</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Total Workouts</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {stats?.totalWorkouts ?? 0}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{workoutsThisWeek} this week</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{workoutsThisWeek} this week</p>
                 </div>
                 <div className="text-5xl opacity-20">🏋️</div>
               </div>
@@ -316,22 +331,24 @@ export default function DashboardPage() {
               {habits.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={getWeeklyProgress()}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="day" stroke="#6b7280" />
-                    <YAxis stroke="#6b7280" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                    <XAxis dataKey="day" stroke={axisColor} tick={{ fill: axisColor }} />
+                    <YAxis stroke={axisColor} tick={{ fill: axisColor }} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
+                        backgroundColor: tooltipBg,
+                        border: `1px solid ${tooltipBorder}`,
                         borderRadius: '8px',
+                        color: tooltipText,
                       }}
+                      itemStyle={{ color: tooltipText }}
                     />
                     <Bar dataKey="completed" fill="#0ea5e9" radius={[8, 8, 0, 0]} name="Completed" />
-                    <Bar dataKey="total" fill="#e5e7eb" radius={[8, 8, 0, 0]} name="Total" />
+                    <Bar dataKey="total" fill={isDark ? '#374151' : '#e5e7eb'} radius={[8, 8, 0, 0]} name="Total" />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-[250px] flex items-center justify-center text-gray-500">
+                <div className="h-[250px] flex items-center justify-center text-gray-500 dark:text-gray-400">
                   No habits to track yet
                 </div>
               )}
@@ -350,15 +367,17 @@ export default function DashboardPage() {
               {workouts.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={getMonthlyWorkouts()}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="date" stroke="#6b7280" tick={{ fontSize: 12 }} />
-                    <YAxis stroke="#6b7280" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                    <XAxis dataKey="date" stroke={axisColor} tick={{ fontSize: 12, fill: axisColor }} />
+                    <YAxis stroke={axisColor} tick={{ fill: axisColor }} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
+                        backgroundColor: tooltipBg,
+                        border: `1px solid ${tooltipBorder}`,
                         borderRadius: '8px',
+                        color: tooltipText,
                       }}
+                      itemStyle={{ color: tooltipText }}
                     />
                     <Line
                       type="monotone"
@@ -371,7 +390,7 @@ export default function DashboardPage() {
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-[250px] flex items-center justify-center text-gray-500">
+                <div className="h-[250px] flex items-center justify-center text-gray-500 dark:text-gray-400">
                   No workouts logged yet
                 </div>
               )}
@@ -381,14 +400,14 @@ export default function DashboardPage() {
           {/* Bottom Row: Habits, Workouts, Achievements */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Your Habits */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <span className="text-2xl">📋</span> Your Habits
                 </h2>
                 <Link
                   href="/habits"
-                  className="text-primary-600 hover:text-primary-700 font-medium text-sm transition"
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition"
                 >
                   View All →
                 </Link>
@@ -396,7 +415,7 @@ export default function DashboardPage() {
               {habits.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-5xl mb-3">📝</div>
-                  <p className="text-gray-600 mb-4 text-sm">No habits yet</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">No habits yet</p>
                   <Link
                     href="/habits"
                     className="inline-block px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm"
@@ -425,27 +444,27 @@ export default function DashboardPage() {
                     return (
                       <div
                         key={habit._id}
-                        className="p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-100 hover:border-primary-200 transition"
+                        className="p-3 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-600 transition"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-xl">
                               {isCompletedToday ? '✅' : '⚪'}
                             </span>
-                            <span className="font-medium text-gray-900 text-sm">{habit.name}</span>
+                            <span className="font-medium text-gray-900 dark:text-white text-sm">{habit.name}</span>
                           </div>
-                          <span className="text-xs text-gray-500 capitalize bg-gray-100 px-2 py-1 rounded">
+                          <span className="text-xs text-gray-500 dark:text-gray-400 capitalize bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                             {habit.frequency}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                             <div
                               className="bg-primary-600 h-1.5 rounded-full transition-all"
                               style={{ width: `${habitRate}%` }}
                             ></div>
                           </div>
-                          <span className="text-xs text-gray-600 font-medium w-12 text-right">
+                          <span className="text-xs text-gray-600 dark:text-gray-400 font-medium w-12 text-right">
                             {habitRate}%
                           </span>
                         </div>
@@ -457,14 +476,14 @@ export default function DashboardPage() {
             </div>
 
             {/* Recent Workouts */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <span className="text-2xl">🏋️</span> Recent Workouts
                 </h2>
                 <Link
                   href="/workouts"
-                  className="text-primary-600 hover:text-primary-700 font-medium text-sm transition"
+                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm transition"
                 >
                   View All →
                 </Link>
@@ -472,7 +491,7 @@ export default function DashboardPage() {
               {recentWorkouts.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-5xl mb-3">💪</div>
-                  <p className="text-gray-600 mb-4 text-sm">No workouts yet</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">No workouts yet</p>
                   <Link
                     href="/workouts"
                     className="inline-block px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm"
@@ -485,13 +504,13 @@ export default function DashboardPage() {
                   {recentWorkouts.map((workout) => (
                     <div
                       key={workout._id}
-                      className="p-3 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100"
+                      className="p-3 bg-gradient-to-r from-green-50 to-white dark:from-gray-800 dark:to-gray-800 rounded-lg border border-green-100 dark:border-gray-700"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-gray-900 text-sm">
+                        <span className="font-medium text-gray-900 dark:text-white text-sm">
                           {format(new Date(workout.date), 'MMM d, yyyy')}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {workout.exercises.length} exercises
                         </span>
                       </div>
@@ -499,13 +518,13 @@ export default function DashboardPage() {
                         {workout.exercises.slice(0, 3).map((exercise: any, idx: number) => (
                           <span
                             key={idx}
-                            className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded"
+                            className="text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-2 py-1 rounded"
                           >
                             {exercise.name}
                           </span>
                         ))}
                         {workout.exercises.length > 3 && (
-                          <span className="text-xs text-gray-500">+{workout.exercises.length - 3}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">+{workout.exercises.length - 3}</span>
                         )}
                       </div>
                     </div>
@@ -515,30 +534,38 @@ export default function DashboardPage() {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <span className="text-2xl">🏆</span> Achievements
               </h2>
-              {achievements.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="text-5xl mb-3">🎯</div>
-                  <p className="text-gray-600 text-sm">Keep going to unlock achievements!</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {achievements.map((achievement, idx) => (
+              <div className="space-y-3">
+                {achievements.map((achievement, idx) => {
+                  const isAchieved = achievement.achieved;
+                  return (
                     <div
                       key={idx}
-                      className="p-3 bg-gradient-to-r from-yellow-50 to-white rounded-lg border border-yellow-100 flex items-center gap-3"
+                      className={`p-3 rounded-lg border flex items-center gap-3 transition-all ${
+                        isAchieved
+                          ? 'bg-gradient-to-r from-yellow-50 to-white dark:from-gray-800 dark:to-gray-800 border-yellow-100 dark:border-gray-700'
+                          : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 border-gray-200 dark:border-gray-800 opacity-50'
+                      }`}
                     >
-                      <span className="text-3xl">{achievement.icon}</span>
-                      <span className={`font-medium text-sm ${achievement.color}`}>
+                      <span className={`text-3xl ${!isAchieved ? 'grayscale' : ''}`}>
+                        {achievement.icon}
+                      </span>
+                      <span
+                        className={`font-medium text-sm ${
+                          isAchieved
+                            ? achievement.color
+                            : 'text-gray-400 dark:text-gray-500'
+                        }`}
+                      >
                         {achievement.text}
                       </span>
                     </div>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
